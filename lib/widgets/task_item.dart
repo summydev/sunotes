@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
+import 'package:sunotes/screens/task_detail_screen.dart';
 
 class TaskItem extends StatelessWidget {
   final TaskModel task;
-  TaskItem({required this.task});
+  const TaskItem({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,10 @@ class TaskItem extends StatelessWidget {
             Provider.of<TaskProvider>(context, listen: false)
                 .updateTask(updatedTask);
           }),
+      onTap: () {
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => TaskDetailScreen(task: task)));
+      },
     );
   }
 }

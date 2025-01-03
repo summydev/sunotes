@@ -18,7 +18,8 @@ class HomeScreen extends StatelessWidget {
       // ),
 
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(200.0), // Increase height for space
+        preferredSize:
+            const Size.fromHeight(200.0), // Increase height for space
         child: ClipPath(
           clipper: BottomRightCurveClipper(),
           child: AppBar(
@@ -32,21 +33,21 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     DropdownButton<TaskFilter>(
                       iconSize: 1,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.menu_open_rounded,
                         color: Colors.white,
                         size: 30,
                       ),
-                      items: [
+                      items: const [
                         DropdownMenuItem(
                             value: TaskFilter.all, child: Text('All')),
                         DropdownMenuItem(
-                          child: Text('Completed'),
                           value: TaskFilter.completed,
+                          child: Text('Completed'),
                         ),
                         DropdownMenuItem(
-                          child: Text('Pending'),
                           value: TaskFilter.pending,
+                          child: Text('Pending'),
                         )
                       ],
                       onChanged: (filter) {
@@ -55,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                         }
                       },
                     ),
-                    Icon(Icons.add)
+                    const Icon(Icons.add)
                   ],
                 ),
               ],
@@ -63,7 +64,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: TaskList(),
+      body: const TaskList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(context: context, builder: (cotext) => AddTaskDialog());
