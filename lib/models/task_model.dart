@@ -2,8 +2,9 @@ class TaskModel {
   final String id;
   final String title;
   final String description;
-  final DateTime dueDate;
+  final DateTime? dueDate;
   bool isCompleted;
+
   TaskModel(
       {required this.id,
       required this.title,
