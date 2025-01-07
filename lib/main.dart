@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/providers/task_provider.dart';
-import 'package:sunotes/screens/home_screen.dart';
+import 'package:sunotes/screens/fiter_card_screen.dart';
 
 void main() {
   runApp(MultiProvider(
@@ -18,7 +18,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       home: MaterialApp(
         title: 'SUn-otE',
-        home: HomeScreen(),
+        home: FilterCardScreen(),
       ),
     );
   }

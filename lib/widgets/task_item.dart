@@ -6,13 +6,19 @@ import 'package:sunotes/screens/task_detail_screen.dart';
 
 class TaskItem extends StatelessWidget {
   final TaskModel task;
-  const TaskItem({super.key, required this.task});
+  final bool isOverdue;
+  const TaskItem({super.key, required this.task, required this.isOverdue});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(task.title),
-      subtitle: Text(task.dueDate.toString()),
+      title: Text(
+        task.title,
+        style: TextStyle(color: isOverdue ? Colors.red : Colors.black),
+      ),
+      subtitle: Text(
+        task.dueDate.toString(),
+      ),
       trailing: Checkbox(
           value: task.isCompleted,
           onChanged: (value) {

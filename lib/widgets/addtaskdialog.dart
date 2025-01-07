@@ -50,7 +50,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     context: context,
                     initialDate: _selectedDeadline ?? DateTime.now(),
                     firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
+                    lastDate: DateTime(2050),
                   );
                   if (pickedDate != null) {
                     setState(() {
