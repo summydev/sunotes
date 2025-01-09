@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
@@ -16,9 +17,9 @@ class TaskItem extends StatelessWidget {
         task.title,
         style: TextStyle(color: isOverdue ? Colors.red : Colors.black),
       ),
-      subtitle: Text(
-        task.dueDate.toString(),
-      ),
+      subtitle: Text(task.dueDate != null
+          ? 'Due: ${DateFormat('yyyy-MM-dd').format(task.dueDate!)}'
+          : 'No Deadline'),
       trailing: Checkbox(
           value: task.isCompleted,
           onChanged: (value) {
