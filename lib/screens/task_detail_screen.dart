@@ -36,10 +36,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Details'),
+        title: Text('Task Details', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 2,
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: Icon(Icons.delete, color: Colors.red),
             onPressed: () {
               Provider.of<TaskProvider>(context, listen: false)
                   .removeTask(widget.task.id);
@@ -50,97 +52,131 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title TextField
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
-              onChanged: (value) {
-                Provider.of<TaskProvider>(context, listen: false).updateTask(
-                  widget.task.copyWith(title: value),
-                );
-              },
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title TextField
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  labelStyle: TextStyle(color: Colors.black),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onChanged: (value) {
+                  Provider.of<TaskProvider>(context, listen: false).updateTask(
+                    widget.task.copyWith(title: value),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 16),
-            // Description TextField
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
-              onChanged: (value) {
-                Provider.of<TaskProvider>(context, listen: false).updateTask(
-                  widget.task.copyWith(description: value),
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            // Checkbox for 'Completed'
-            Row(
-              children: [
-                const Text('Completed:'),
-                Consumer<TaskProvider>(
-                  builder: (context, taskProvider, child) {
-                    final updatedTask =
-                        taskProvider.getTaskById(widget.task.id);
-                    return Checkbox(
-                      value: updatedTask.isCompleted,
-                      onChanged: (value) {
-                        if (value != null) {
-                          taskProvider.updateTask(
-                            updatedTask.copyWith(isCompleted: value),
-                          );
-                        }
-                      },
-                    );
-                  },
+              // Description TextField
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  labelStyle: TextStyle(color: Colors.black),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Due Date Selector
-            Row(
-              children: [
-                const Text('Due Date:'),
-                const Spacer(),
-                Consumer<TaskProvider>(
-                  builder: (context, taskProvider, child) {
-                    final updatedTask =
-                        taskProvider.getTaskById(widget.task.id);
-                    return Row(
-                      children: [
-                        Text(
-                          updatedTask.dueDate != null
-                              ? DateFormat('yyyy-MM-dd')
-                                  .format(updatedTask.dueDate!)
-                              : 'None',
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate:
-                                  updatedTask.dueDate ?? DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2050),
+                onChanged: (value) {
+                  Provider.of<TaskProvider>(context, listen: false).updateTask(
+                    widget.task.copyWith(description: value),
+                  );
+                },
+                maxLines: 5,
+              ),
+              const SizedBox(height: 16),
+
+              // Checkbox for 'Completed'
+              Row(
+                children: [
+                  Text(
+                    'Completed:',
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  const SizedBox(width: 8),
+                  Consumer<TaskProvider>(
+                    builder: (context, taskProvider, child) {
+                      final updatedTask =
+                          taskProvider.getTaskById(widget.task.id);
+                      return Checkbox(
+                        value: updatedTask.isCompleted,
+                        onChanged: (value) {
+                          if (value != null) {
+                            taskProvider.updateTask(
+                              updatedTask.copyWith(isCompleted: value),
                             );
-                            if (pickedDate != null) {
-                              taskProvider.updateTask(
-                                updatedTask.copyWith(dueDate: pickedDate),
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Due Date Selector
+              Row(
+                children: [
+                  Text(
+                    'Due Date:',
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  const Spacer(),
+                  Consumer<TaskProvider>(
+                    builder: (context, taskProvider, child) {
+                      final updatedTask =
+                          taskProvider.getTaskById(widget.task.id);
+                      return Row(
+                        children: [
+                          Text(
+                            updatedTask.dueDate != null
+                                ? DateFormat('yyyy-MM-dd')
+                                    .format(updatedTask.dueDate!)
+                                : 'None',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          IconButton(
+                            icon:
+                                Icon(Icons.calendar_today, color: Colors.blue),
+                            onPressed: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate:
+                                    updatedTask.dueDate ?? DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2050),
                               );
-                              setState(() {}); // Refresh UI
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
+                              if (pickedDate != null) {
+                                taskProvider.updateTask(
+                                  updatedTask.copyWith(dueDate: pickedDate),
+                                );
+                                setState(() {}); // Refresh UI
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

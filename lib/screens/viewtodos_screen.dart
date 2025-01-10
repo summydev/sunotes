@@ -61,67 +61,79 @@ class ViewTodoScreen extends StatelessWidget {
       int completedCount =
           filteredTasks.where((task) => task.isCompleted).length;
       int pendingCount = filteredTasks.length - completedCount;
+
       return Scaffold(
         appBar: PreferredSize(
           preferredSize:
-              const Size.fromHeight(200.0), // Increase height for space
+              const Size.fromHeight(220.0), // Increased AppBar height
           child: ClipPath(
             clipper: BottomRightCurveClipper(),
             child: AppBar(
-              elevation: 0,
-              toolbarHeight: 170,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('$filter Tasks'),
-                  Text(
-                    '$completedCount completed, $pendingCount pending',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                  DropdownButton<TaskFilter>(
-                    iconSize: 1,
-                    icon: const Icon(
-                      Icons.menu_open_rounded,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    items: const [
-                      DropdownMenuItem(
-                          value: TaskFilter.all, child: Text('All')),
-                      DropdownMenuItem(
-                        value: TaskFilter.completed,
-                        child: Text('Completed'),
-                      ),
-                      DropdownMenuItem(
-                        value: TaskFilter.pending,
-                        child: Text('Pending'),
-                      )
-                    ],
-                    onChanged: (filter) {
-                      if (filter != null) {
-                        taskProvider.setFilter(filter);
-                      }
-                    },
-                  ),
-                ],
-              ),
-              backgroundColor: Colors.blue,
+              elevation: 1,
+              toolbarHeight: 160,
+              backgroundColor: const Color.fromARGB(255, 224, 235, 245),
               automaticallyImplyLeading: false,
+              flexibleSpace: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$filter Tasks',
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '$completedCount completed, $pendingCount pending',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButton<TaskFilter>(
+                      iconSize: 1,
+                      icon: const Icon(
+                        Icons.menu_open_rounded,
+                        color: Colors.black,
+                        size: 30,
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                            value: TaskFilter.all, child: Text('All')),
+                        DropdownMenuItem(
+                          value: TaskFilter.completed,
+                          child: Text('Completed'),
+                        ),
+                        DropdownMenuItem(
+                          value: TaskFilter.pending,
+                          child: Text('Pending'),
+                        )
+                      ],
+                      onChanged: (filter) {
+                        if (filter != null) {
+                          taskProvider.setFilter(filter);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-        body: TaskList(
-          filteredTasks: filteredTasks,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TaskList(filteredTasks: filteredTasks),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showDialog(
-                context: context, builder: (cotext) => const AddTaskDialog());
+                context: context, builder: (context) => const AddTaskDialog());
           },
-          child: const Icon(Icons.add),
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add, color: Colors.white),
         ),
       );
     });
