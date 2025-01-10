@@ -50,68 +50,66 @@ class ViewTodoScreen extends StatelessWidget {
                 task.dueDate!.isBefore(startOfNextMonth))
             .toList();
       default:
-        return tasks;
+        return tasks.where((task) => task.category == filter).toList();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    //final taskProvider = Provider.of<TaskProvider>(context);
-
     return Consumer<TaskProvider>(builder: (context, taskProvider, child) {
       final filteredTasks = filterTasks(taskProvider.tasks, filter);
-
+      int completedCount =
+          filteredTasks.where((task) => task.isCompleted).length;
+      int pendingCount = filteredTasks.length - completedCount;
       return Scaffold(
-        // appBar: AppBar(
-        //   title: Center(child: const Text('SUnotE')),
-        //
-        // ),
-
         appBar: PreferredSize(
           preferredSize:
               const Size.fromHeight(200.0), // Increase height for space
           child: ClipPath(
             clipper: BottomRightCurveClipper(),
             child: AppBar(
-              title: Text('$filter Tasks (${filteredTasks.length})'),
-              backgroundColor: Colors.blue,
-              flexibleSpace: Column(
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Center the column vertically
+              elevation: 0,
+              toolbarHeight: 170,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      DropdownButton<TaskFilter>(
-                        iconSize: 1,
-                        icon: const Icon(
-                          Icons.menu_open_rounded,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                              value: TaskFilter.all, child: Text('All')),
-                          DropdownMenuItem(
-                            value: TaskFilter.completed,
-                            child: Text('Completed'),
-                          ),
-                          DropdownMenuItem(
-                            value: TaskFilter.pending,
-                            child: Text('Pending'),
-                          )
-                        ],
-                        onChanged: (filter) {
-                          if (filter != null) {
-                            taskProvider.setFilter(filter);
-                          }
-                        },
+                  Text('$filter Tasks'),
+                  Text(
+                    '$completedCount completed, $pendingCount pending',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  DropdownButton<TaskFilter>(
+                    iconSize: 1,
+                    icon: const Icon(
+                      Icons.menu_open_rounded,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                          value: TaskFilter.all, child: Text('All')),
+                      DropdownMenuItem(
+                        value: TaskFilter.completed,
+                        child: Text('Completed'),
                       ),
-                      const Icon(Icons.add)
+                      DropdownMenuItem(
+                        value: TaskFilter.pending,
+                        child: Text('Pending'),
+                      )
                     ],
+                    onChanged: (filter) {
+                      if (filter != null) {
+                        taskProvider.setFilter(filter);
+                      }
+                    },
                   ),
                 ],
               ),
+              backgroundColor: Colors.blue,
+              automaticallyImplyLeading: false,
             ),
           ),
         ),
