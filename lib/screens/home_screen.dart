@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/providers/task_provider.dart';
 import 'package:sunotes/screens/viewtodos_screen.dart';
+import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,10 +10,26 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final filters = [
-      {'label': 'Today', 'filter': 'Today', 'color': Colors.red},
-      {'label': 'Tomorrow', 'filter': 'Tomorrow', 'color': Colors.blue},
-      {'label': 'This Week', 'filter': 'This Week', 'color': Colors.green},
-      {'label': 'This Month', 'filter': 'This Month', 'color': Colors.purple}
+      {
+        'label': 'Today',
+        'filter': 'Today',
+        'color': BrandColors.secondaryColor
+      },
+      {
+        'label': 'Tomorrow',
+        'filter': 'Tomorrow',
+        'color': BrandColors.primaryColor
+      },
+      {
+        'label': 'This Week',
+        'filter': 'This Week',
+        'color': BrandColors.accentColor
+      },
+      {
+        'label': 'This Month',
+        'filter': 'This Month',
+        'color': BrandColors.textColor
+      },
     ];
 
     final taskProvider = Provider.of<TaskProvider>(context);
@@ -37,7 +54,8 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         toolbarHeight: 100,
-        backgroundColor: Colors.white,
+        backgroundColor:
+            BrandColors.primaryColor, // Using the primary brand color
         elevation: 0,
       ),
       body: Padding(

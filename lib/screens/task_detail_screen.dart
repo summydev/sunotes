@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // For date formatting
 import 'package:provider/provider.dart';
 import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
-import 'package:intl/intl.dart'; // For date formatting
+import 'package:sunotes/widgets/brand_colors.dart'; // Assuming you have a brand color file
 
 class TaskDetailScreen extends StatefulWidget {
   final TaskModel task;
@@ -36,12 +37,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task Details', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        title: Text('Task Details',
+            style: TextStyle(color: BrandColors.textColor)),
+        backgroundColor: BrandColors.primaryColor,
         elevation: 2,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
+            icon: Icon(Icons.delete, color: BrandColors.dangerColor),
             onPressed: () {
               Provider.of<TaskProvider>(context, listen: false)
                   .removeTask(widget.task.id);
@@ -61,10 +63,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 controller: titleController,
                 decoration: InputDecoration(
                   labelText: 'Title',
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: TextStyle(color: BrandColors.textColor),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blue),
+                    borderSide: BorderSide(color: BrandColors.accentColor),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -83,10 +85,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 controller: descriptionController,
                 decoration: InputDecoration(
                   labelText: 'Description',
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: TextStyle(color: BrandColors.textColor),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blue),
+                    borderSide: BorderSide(color: BrandColors.accentColor),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -106,7 +108,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 children: [
                   Text(
                     'Completed:',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style:
+                        TextStyle(fontSize: 16, color: BrandColors.textColor),
                   ),
                   const SizedBox(width: 8),
                   Consumer<TaskProvider>(
@@ -122,6 +125,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             );
                           }
                         },
+                        activeColor: BrandColors
+                            .accentColor, // Use brand accent color for checkbox
                       );
                     },
                   ),
@@ -134,7 +139,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 children: [
                   Text(
                     'Due Date:',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style:
+                        TextStyle(fontSize: 16, color: BrandColors.textColor),
                   ),
                   const Spacer(),
                   Consumer<TaskProvider>(
@@ -148,11 +154,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                 ? DateFormat('yyyy-MM-dd')
                                     .format(updatedTask.dueDate!)
                                 : 'None',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: updatedTask.dueDate != null
+                                  ? BrandColors.textColor
+                                  : Colors.grey,
+                            ),
                           ),
                           IconButton(
-                            icon:
-                                Icon(Icons.calendar_today, color: Colors.blue),
+                            icon: Icon(Icons.calendar_today,
+                                color: BrandColors.accentColor),
                             onPressed: () async {
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,

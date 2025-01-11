@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
+import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
 
 class AddTaskDialog extends StatefulWidget {
   const AddTaskDialog({super.key});
@@ -32,16 +33,16 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     ];
 
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: BrandColors.cardColor, // Set background color to white
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Padding(
-        padding: const EdgeInsets.all(8.0),
+      title: const Padding(
+        padding: EdgeInsets.all(8.0),
         child: Text(
           'Add Task',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: BrandColors.primaryColor, // Use primary color for title text
           ),
         ),
       ),
@@ -58,6 +59,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                    color: BrandColors
+                        .primaryColor), // Border color for text field
               ),
             ),
           ),
@@ -67,7 +71,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           DropdownButton<String>(
             value: _selectedCategory,
             isExpanded: true,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+                color: BrandColors.textColor), // Use text color from the brand
             items: categories
                 .map((category) => DropdownMenuItem(
                       value: category,
@@ -84,7 +89,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             // Instead of 'decoration', use 'underline' to style the dropdown
             underline: Container(
               height: 1,
-              color: Colors.grey[400], // Border style for the dropdown
+              color: BrandColors.primaryColor, // Border style for the dropdown
             ),
           ),
           const SizedBox(height: 16),
@@ -92,7 +97,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           // Deadline Row
           Row(
             children: [
-              const Text('Deadline:', style: TextStyle(color: Colors.black)),
+              const Text('Deadline:',
+                  style: TextStyle(
+                      color:
+                          BrandColors.textColor)), // Use text color for labels
               const Spacer(),
               Text(
                 _selectedDeadline != null
@@ -101,7 +109,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 style: TextStyle(color: Colors.grey[700]),
               ),
               IconButton(
-                icon: const Icon(Icons.calendar_today),
+                icon: const Icon(Icons.calendar_today,
+                    color: BrandColors
+                        .primaryColor), // Icon color with primary color
                 onPressed: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -124,7 +134,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         // Cancel Button
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(foregroundColor: Colors.grey[700]),
+          style: TextButton.styleFrom(
+              foregroundColor:
+                  BrandColors.textColor), // Cancel button color with text color
           child: const Text('Cancel'),
         ),
         // Add Task Button
@@ -146,7 +158,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               Navigator.of(context).pop();
             }
           },
-          style: TextButton.styleFrom(foregroundColor: Colors.blue),
+          style: TextButton.styleFrom(
+            foregroundColor:
+                BrandColors.accentColor, // Accent color for Add button
+          ),
           child: const Text('Add'),
         ),
       ],

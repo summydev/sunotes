@@ -8,15 +8,16 @@ class TaskProvider extends ChangeNotifier {
   TaskFilter _filter = TaskFilter.all;
 
   final Map<String, Color> _categoryColors = {
-    'Work': Colors.red,
-    'Personal': Colors.green,
-    'Health': Colors.blue,
-    'Hobby': Colors.orange
+    'Uncategorized': Colors.grey,
+    'Work': const Color.fromARGB(255, 126, 180, 241),
+    'Personal': const Color.fromARGB(255, 50, 202, 114),
+    'Shopping': const Color.fromARGB(255, 233, 28, 96),
+    'Health': const Color.fromARGB(255, 69, 73, 69),
   };
 
   // Getter for category colors
   Color getCategoryColor(String category) {
-    return _categoryColors[category] ?? Colors.blue;
+    return _categoryColors[category] ?? const Color.fromARGB(255, 32, 145, 238);
   }
 
 //Getter for task based on categories

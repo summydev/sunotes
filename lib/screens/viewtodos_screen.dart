@@ -4,6 +4,7 @@ import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
 import 'package:sunotes/widgets/addtaskdialog.dart';
 import 'package:sunotes/widgets/task_list.dart';
+import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
 
 extension DateTimeComparison on DateTime {
   bool isSameDay(DateTime other) {
@@ -71,24 +72,28 @@ class ViewTodoScreen extends StatelessWidget {
             child: AppBar(
               elevation: 1,
               toolbarHeight: 160,
-              backgroundColor: const Color.fromARGB(255, 224, 235, 245),
+              backgroundColor: BrandColors.primaryColor, // Primary brand color
               automaticallyImplyLeading: false,
               flexibleSpace: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(height: 20.0),
                     Text(
                       '$filter Tasks',
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white), // White text for contrast
                     ),
                     const SizedBox(height: 8),
                     Text(
                       '$completedCount completed, $pendingCount pending',
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.grey,
+                        color:
+                            Colors.white70, // Lighter white for secondary text
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -132,7 +137,7 @@ class ViewTodoScreen extends StatelessWidget {
             showDialog(
                 context: context, builder: (context) => const AddTaskDialog());
           },
-          backgroundColor: Colors.blue,
+          backgroundColor: BrandColors.accentColor, // Accent color for button
           child: const Icon(Icons.add, color: Colors.white),
         ),
       );

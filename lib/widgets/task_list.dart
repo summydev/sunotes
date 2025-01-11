@@ -16,8 +16,14 @@ class TaskList extends StatelessWidget {
         itemBuilder: (ctx, index) {
           // final task = tasks[index];
           final task = filteredTasks[index];
-          final isOverdue =
-              task.dueDate != null && task.dueDate!.isBefore(DateTime.now());
+
+          final isOverdue = task.dueDate != null &&
+              task.dueDate!.isBefore(DateTime.now().toLocal().subtract(Duration(
+                  hours: DateTime.now().hour,
+                  minutes: DateTime.now().minute,
+                  seconds: DateTime.now().second,
+                  milliseconds: DateTime.now().millisecond)));
+
           final categoryColor = taskProvider.getCategoryColor(task.category);
 
           return TaskItem(
