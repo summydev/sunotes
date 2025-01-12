@@ -79,10 +79,10 @@ class ViewTodoScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 40.0),
                     Text(
                       '$filter Tasks',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white), // White text for contrast

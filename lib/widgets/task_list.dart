@@ -6,31 +6,32 @@ import 'package:sunotes/widgets/task_item.dart';
 
 class TaskList extends StatelessWidget {
   final List<TaskModel> filteredTasks;
+
   const TaskList({super.key, required this.filteredTasks});
 
   @override
   Widget build(BuildContext context) {
-    final taskProvider = Provider.of<TaskProvider>(context);
-    return ListView.builder(
-        itemCount: filteredTasks.length,
-        itemBuilder: (ctx, index) {
-          // final task = tasks[index];
-          final task = filteredTasks[index];
+    return Consumer<TaskProvider>(
+      builder: (context, taskProvider, child) {
+        return ListView.builder(
+          itemCount: filteredTasks.length,
+          itemBuilder: (ctx, index) {
+            final task = filteredTasks[index];
 
-          final isOverdue = task.dueDate != null &&
-              task.dueDate!.isBefore(DateTime.now().toLocal().subtract(Duration(
-                  hours: DateTime.now().hour,
-                  minutes: DateTime.now().minute,
-                  seconds: DateTime.now().second,
-                  milliseconds: DateTime.now().millisecond)));
+            // Recalculate `isOverdue` dynamically
+            final isOverdue =
+                task.dueDate != null && task.dueDate!.isBefore(DateTime.now());
 
-          final categoryColor = taskProvider.getCategoryColor(task.category);
+            final categoryColor = taskProvider.getCategoryColor(task.category);
 
-          return TaskItem(
-            categoryColor: categoryColor,
-            task: task,
-            isOverdue: isOverdue,
-          );
-        });
+            return TaskItem(
+              categoryColor: categoryColor,
+              task: task,
+              isOverdue: isOverdue,
+            );
+          },
+        );
+      },
+    );
   }
 }

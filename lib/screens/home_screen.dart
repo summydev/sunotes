@@ -9,6 +9,22 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the taskProvider instance
+    final taskProvider = Provider.of<TaskProvider>(context);
+
+    // Check if the task box is open or not
+    if (taskProvider.taskBox.isOpen == false) {
+      // If the task box isn't open, show a loading indicator
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Colors.red,
+          ), // Or some loading screen
+        ),
+      );
+    }
+
+    // Once the task box is open, continue with the rest of the UI
     final filters = [
       {
         'label': 'Today',
@@ -32,7 +48,6 @@ class HomeScreen extends StatelessWidget {
       },
     ];
 
-    final taskProvider = Provider.of<TaskProvider>(context);
     final categories =
         taskProvider.getCategories(); // Get categories from TaskProvider
 
