@@ -2,29 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/providers/task_provider.dart';
 import 'package:sunotes/screens/viewtodos_screen.dart';
-import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
+import 'package:sunotes/widgets/brand_colors.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get the taskProvider instance
     final taskProvider = Provider.of<TaskProvider>(context);
 
-    // Check if the task box is open or not
-    if (taskProvider.taskBox.isOpen == false) {
-      // If the task box isn't open, show a loading indicator
-      return Scaffold(
+    // Check if the provider is initialized
+    if (!taskProvider.isInitialized) {
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(
-            color: Colors.red,
-          ), // Or some loading screen
+            color: Colors.red, // Or another color from your brand colors
+          ),
         ),
       );
     }
 
-    // Once the task box is open, continue with the rest of the UI
     final filters = [
       {
         'label': 'Today',
@@ -48,36 +45,22 @@ class HomeScreen extends StatelessWidget {
       },
     ];
 
-    final categories =
-        taskProvider.getCategories(); // Get categories from TaskProvider
+    final categories = taskProvider.getCategories();
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black),
-              onPressed: () {},
-              alignment: Alignment.centerLeft,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Su-Notes',
-              style: TextStyle(color: Colors.black, fontSize: 20),
-            ),
-          ],
+        title: const Text(
+          'Su-Notes',
+          style: TextStyle(color: Colors.black),
         ),
-        toolbarHeight: 100,
-        backgroundColor:
-            BrandColors.primaryColor, // Using the primary brand color
+        backgroundColor: BrandColors.primaryColor,
         elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: CustomScrollView(
           slivers: [
-            // First Sliver for the filter options (GridView)
+            // Filter Options
             SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -93,7 +76,6 @@ class HomeScreen extends StatelessWidget {
                       margin: const EdgeInsets.all(8.0),
                       child: Stack(
                         children: [
-                          // Color circle at the top-left corner
                           Positioned(
                             top: 8,
                             left: 8,
@@ -106,16 +88,12 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Card content
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                filter['label'] as String,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Center(
+                            child: Text(
+                              filter['label'] as String,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -139,7 +117,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // Sliver for categories (ListView)
+            // Categories List
             SliverToBoxAdapter(
               child: categories.isEmpty
                   ? const Center(
@@ -160,8 +138,6 @@ class HomeScreen extends StatelessWidget {
                           itemCount: categories.length,
                           itemBuilder: (context, index) {
                             final category = categories[index];
-
-                            // Get the number of tasks in the current category
                             final itemCount = taskProvider
                                 .getTasksByCategory(category)
                                 .length;
@@ -173,8 +149,8 @@ class HomeScreen extends StatelessWidget {
                                 width: 12,
                                 height: 12,
                                 decoration: BoxDecoration(
-                                  color: taskProvider.getCategoryColor(
-                                      category), // Get color for category
+                                  color:
+                                      taskProvider.getCategoryColor(category),
                                   shape: BoxShape.circle,
                                 ),
                               ),

@@ -5,9 +5,16 @@ import 'package:sunotes/models/task_model.dart';
 enum TaskFilter { all, completed, pending }
 
 class TaskProvider extends ChangeNotifier {
-  late Box<TaskModel> taskBox;
+  late Box<TaskModel> _taskBox;
   final List<TaskModel> _tasks = [];
   TaskFilter _filter = TaskFilter.all;
+  bool _isInitialized = false;
+
+  bool get isInitialized => _isInitialized;
+
+  TaskProvider() {
+    initialize();
+  }
 
   // Category color mapping
   final Map<String, Color> _categoryColors = {
@@ -20,11 +27,11 @@ class TaskProvider extends ChangeNotifier {
 
   // Initialize the Hive box and load tasks
   Future<void> initialize() async {
-    taskBox = await Hive.openBox<TaskModel>(
-        'tasks'); // Ensure this opens successfully
-    _tasks.clear(); // Clear the current list to avoid duplicates
-    _tasks.addAll(taskBox.values);
-    print("Loaded tasks from Hive: ${_tasks.length}"); // Debug print
+    _taskBox = await Hive.openBox<TaskModel>('tasks');
+    _tasks.clear();
+    _tasks.addAll(_taskBox.values);
+    print("Loaded tasks from Hive: ${_tasks.length}");
+    _isInitialized = true;
     notifyListeners();
   }
 
@@ -67,16 +74,16 @@ class TaskProvider extends ChangeNotifier {
   // Add a task to the list and save to Hive
   void addTask(TaskModel task) {
     _tasks.add(task);
-    taskBox.put(task.id, task); // Save to Hive
-    print("Task added: ${task.title}, ID: ${task.id}"); // Debug print
+    _taskBox.put(task.id, task);
+    print("Task added: ${task.title}, ID: ${task.id}");
     notifyListeners();
     printBoxContent();
   }
 
   void printBoxContent() {
     print("Hive Box Content:");
-    for (var key in taskBox.keys) {
-      print("Key: $key, Value: ${taskBox.get(key)}");
+    for (var key in _taskBox.keys) {
+      print("Key: $key, Value: ${_taskBox.get(key)}");
     }
   }
 
@@ -85,7 +92,7 @@ class TaskProvider extends ChangeNotifier {
     final taskIndex = _tasks.indexWhere((task) => task.id == updatedTask.id);
     if (taskIndex != -1) {
       _tasks[taskIndex] = updatedTask;
-      taskBox.put(updatedTask.id, updatedTask); // Update in Hive
+      _taskBox.put(updatedTask.id, updatedTask);
       notifyListeners();
     }
   }
@@ -93,15 +100,15 @@ class TaskProvider extends ChangeNotifier {
   // Remove a task by ID from the list and Hive
   void removeTask(String id) {
     _tasks.removeWhere((task) => task.id == id);
-    taskBox.delete(id); // Remove from Hive
+    _taskBox.delete(id);
     notifyListeners();
   }
 
   // Toggle task completion status
   void toggleTaskCompletion(String id) {
     final task = _tasks.firstWhere((task) => task.id == id);
-    task.toggleCompleted(); // Assuming you have a method for toggling completion
-    taskBox.put(task.id, task); // Save the updated task to Hive
+    task.toggleCompleted();
+    _taskBox.put(task.id, task);
     notifyListeners();
   }
 
@@ -113,15 +120,15 @@ class TaskProvider extends ChangeNotifier {
   List<TaskModel> get pendingTasks =>
       _tasks.where((task) => !task.isCompleted).toList();
 
-  // New method to get a task by its ID
+  // Get a task by its ID
   TaskModel getTaskById(String id) {
     return _tasks.firstWhere((task) => task.id == id);
   }
 
-  // Method to clear all tasks from both the list and Hive
+  // Clear all tasks from both the list and Hive
   void clearAllTasks() {
     _tasks.clear();
-    taskBox.clear(); // Remove all tasks from Hive
+    _taskBox.clear();
     notifyListeners();
   }
 }
