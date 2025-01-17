@@ -1,8 +1,220 @@
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:sunotes/models/task_model.dart';
+// import 'package:sunotes/providers/task_provider.dart';
+// import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
+
+// class AddTaskDialog extends StatefulWidget {
+//   const AddTaskDialog({super.key});
+
+//   @override
+//   _AddTaskDialogState createState() => _AddTaskDialogState();
+// }
+
+// class _AddTaskDialogState extends State<AddTaskDialog> {
+//   final TextEditingController _controller = TextEditingController();
+//   String _selectedCategory = 'Uncategorized';
+//   DateTime? _selectedDeadline;
+//   TimeOfDay? _selectedTime;
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   // Method to pick time
+//   Future<void> _selectTime(BuildContext context) async {
+//     TimeOfDay? pickedTime = await showTimePicker(
+//       context: context,
+//       initialTime: _selectedTime ?? TimeOfDay.now(),
+//     );
+//     if (pickedTime != null) {
+//       setState(() {
+//         _selectedTime = pickedTime;
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final categories = [
+//       'Uncategorized',
+//       'Work',
+//       'Personal',
+//       'Shopping',
+//       'Health'
+//     ];
+
+//     return AlertDialog(
+//       backgroundColor: BrandColors.cardColor, // Set background color to white
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+//       title: const Padding(
+//         padding: EdgeInsets.all(8.0),
+//         child: Text(
+//           'Add Task',
+//           style: TextStyle(
+//             fontSize: 24,
+//             fontWeight: FontWeight.bold,
+//             color: BrandColors.primaryColor, // Use primary color for title text
+//           ),
+//         ),
+//       ),
+//       content: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           // Task Title Input
+//           TextField(
+//             controller: _controller,
+//             decoration: InputDecoration(
+//               hintText: 'Enter task',
+//               hintStyle: TextStyle(color: Colors.grey[600]),
+//               contentPadding:
+//                   const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+//               border: OutlineInputBorder(
+//                 borderRadius: BorderRadius.circular(12),
+//                 borderSide: const BorderSide(
+//                     color: BrandColors
+//                         .primaryColor), // Border color for text field
+//               ),
+//             ),
+//           ),
+//           const SizedBox(height: 16),
+
+//           // Category Dropdown
+//           DropdownButton<String>(
+//             value: _selectedCategory,
+//             isExpanded: true,
+//             style: const TextStyle(
+//                 color: BrandColors.textColor), // Use text color from the brand
+//             items: categories
+//                 .map((category) => DropdownMenuItem(
+//                       value: category,
+//                       child: Text(category),
+//                     ))
+//                 .toList(),
+//             onChanged: (value) {
+//               if (value != null) {
+//                 setState(() {
+//                   _selectedCategory = value;
+//                 });
+//               }
+//             },
+//             // Instead of 'decoration', use 'underline' to style the dropdown
+//             underline: Container(
+//               height: 1,
+//               color: BrandColors.primaryColor, // Border style for the dropdown
+//             ),
+//           ),
+//           const SizedBox(height: 16),
+
+//           // Deadline Row
+//           Row(
+//             children: [
+//               const Text('Deadline: ',
+//                   style: TextStyle(
+//                       color:
+//                           BrandColors.textColor)), // Use text color for labels
+//               const Spacer(),
+//               Text(
+//                 _selectedDeadline != null
+//                     ? "${_selectedDeadline!.year}-${_selectedDeadline!.month.toString().padLeft(2, '0')}-${_selectedDeadline!.day.toString().padLeft(2, '0')}"
+//                     : 'None',
+//                 style: TextStyle(color: Colors.grey[700]),
+//               ),
+//               IconButton(
+//                 icon: const Icon(Icons.calendar_today,
+//                     color: BrandColors
+//                         .primaryColor), // Icon color with primary color
+//                 onPressed: () async {
+//                   DateTime? pickedDate = await showDatePicker(
+//                     context: context,
+//                     initialDate: _selectedDeadline ?? DateTime.now(),
+//                     firstDate: DateTime.now(),
+//                     lastDate: DateTime(2050),
+//                   );
+//                   if (pickedDate != null) {
+//                     setState(() {
+//                       _selectedDeadline = pickedDate;
+//                     });
+//                     // After picking the date, allow selecting the time
+//                     await _selectTime(context);
+//                   }
+//                 },
+//               ),
+//             ],
+//           ),
+//           if (_selectedTime != null) ...[
+//             const SizedBox(height: 8),
+//             Row(
+//               children: [
+//                 const Text('Time: ',
+//                     style: TextStyle(color: BrandColors.textColor)),
+//                 const Spacer(),
+//                 Text(
+//                   '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')}',
+//                   style: TextStyle(color: Colors.grey[700]),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ],
+//       ),
+//       actions: [
+//         // Cancel Button
+//         TextButton(
+//           onPressed: () => Navigator.of(context).pop(),
+//           style: TextButton.styleFrom(
+//               foregroundColor:
+//                   BrandColors.textColor), // Cancel button color with text color
+//           child: const Text('Cancel'),
+//         ),
+//         // Add Task Button
+//         TextButton(
+//           onPressed: () {
+//             if (_controller.text.isNotEmpty) {
+//               final DateTime createdDate = DateTime.now();
+//               final DateTime finalDeadline = _selectedDeadline != null
+//                   ? DateTime(
+//                       _selectedDeadline!.year,
+//                       _selectedDeadline!.month,
+//                       _selectedDeadline!.day,
+//                       _selectedTime?.hour ?? 0,
+//                       _selectedTime?.minute ?? 0,
+//                     )
+//                   : createdDate;
+
+//               final newTask = TaskModel(
+//                 id: DateTime.now().microsecondsSinceEpoch.toString(),
+//                 title: _controller.text,
+//                 description: '',
+//                 isCompleted: false,
+//                 category: _selectedCategory,
+//                 dueDate: finalDeadline, // Use combined deadline
+//               );
+//               // Add the task using the TaskProvider
+//               Provider.of<TaskProvider>(context, listen: false)
+//                   .addTask(newTask);
+//               Navigator.of(context).pop();
+//             }
+//           },
+//           style: TextButton.styleFrom(
+//             foregroundColor:
+//                 BrandColors.accentColor, // Accent color for Add button
+//           ),
+//           child: const Text('Add'),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
-import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
+import 'package:sunotes/services/notification_helper.dart';
+import 'package:sunotes/widgets/brand_colors.dart';
 
 class AddTaskDialog extends StatefulWidget {
   const AddTaskDialog({super.key});
@@ -47,7 +259,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     ];
 
     return AlertDialog(
-      backgroundColor: BrandColors.cardColor, // Set background color to white
+      backgroundColor: BrandColors.cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: const Padding(
         padding: EdgeInsets.all(8.0),
@@ -56,7 +268,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: BrandColors.primaryColor, // Use primary color for title text
+            color: BrandColors.primaryColor,
           ),
         ),
       ),
@@ -73,9 +285,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                    color: BrandColors
-                        .primaryColor), // Border color for text field
+                borderSide: const BorderSide(color: BrandColors.primaryColor),
               ),
             ),
           ),
@@ -85,8 +295,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           DropdownButton<String>(
             value: _selectedCategory,
             isExpanded: true,
-            style: const TextStyle(
-                color: BrandColors.textColor), // Use text color from the brand
+            style: const TextStyle(color: BrandColors.textColor),
             items: categories
                 .map((category) => DropdownMenuItem(
                       value: category,
@@ -100,10 +309,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 });
               }
             },
-            // Instead of 'decoration', use 'underline' to style the dropdown
             underline: Container(
               height: 1,
-              color: BrandColors.primaryColor, // Border style for the dropdown
+              color: BrandColors.primaryColor,
             ),
           ),
           const SizedBox(height: 16),
@@ -112,9 +320,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           Row(
             children: [
               const Text('Deadline: ',
-                  style: TextStyle(
-                      color:
-                          BrandColors.textColor)), // Use text color for labels
+                  style: TextStyle(color: BrandColors.textColor)),
               const Spacer(),
               Text(
                 _selectedDeadline != null
@@ -124,8 +330,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               ),
               IconButton(
                 icon: const Icon(Icons.calendar_today,
-                    color: BrandColors
-                        .primaryColor), // Icon color with primary color
+                    color: BrandColors.primaryColor),
                 onPressed: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -137,7 +342,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     setState(() {
                       _selectedDeadline = pickedDate;
                     });
-                    // After picking the date, allow selecting the time
+                    // Allow picking time after date is selected
                     await _selectTime(context);
                   }
                 },
@@ -164,14 +369,12 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         // Cancel Button
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(
-              foregroundColor:
-                  BrandColors.textColor), // Cancel button color with text color
+          style: TextButton.styleFrom(foregroundColor: BrandColors.textColor),
           child: const Text('Cancel'),
         ),
         // Add Task Button
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             if (_controller.text.isNotEmpty) {
               final DateTime createdDate = DateTime.now();
               final DateTime finalDeadline = _selectedDeadline != null
@@ -190,17 +393,28 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 description: '',
                 isCompleted: false,
                 category: _selectedCategory,
-                dueDate: finalDeadline, // Use combined deadline
+                dueDate: finalDeadline,
               );
+
               // Add the task using the TaskProvider
               Provider.of<TaskProvider>(context, listen: false)
                   .addTask(newTask);
+
+              // Schedule a notification
+              if (_selectedDeadline != null && _selectedTime != null) {
+                await NotificationHelper.scheduleNotification(
+                  id: newTask.id.hashCode,
+                  title: 'Reminder: ${newTask.title}',
+                  body: 'Don’t forget to complete this task!',
+                  scheduledTime: finalDeadline,
+                );
+              }
+
               Navigator.of(context).pop();
             }
           },
           style: TextButton.styleFrom(
-            foregroundColor:
-                BrandColors.accentColor, // Accent color for Add button
+            foregroundColor: BrandColors.accentColor,
           ),
           child: const Text('Add'),
         ),
