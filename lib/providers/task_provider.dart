@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sunotes/models/task_model.dart';
+import 'package:sunotes/services/notification_service.dart';
 
 enum TaskFilter { all, completed, pending }
 
@@ -75,8 +76,16 @@ class TaskProvider extends ChangeNotifier {
   void addTask(TaskModel task) {
     _tasks.add(task);
     _taskBox.put(task.id, task);
-    print("Task added: ${task.title}, ID: ${task.id}");
+
     notifyListeners();
+    if (task.dueDate != null) {
+      NotificationService().scheduleNotification(
+        id: task.id.hashCode,
+        title: 'Task Reminder 🔔',
+        body: 'Your task "${task.title}" is due soon!',
+        scheduledTime: task.dueDate!.subtract(Duration(minutes: 1)),
+      );
+    }
     printBoxContent();
   }
 
