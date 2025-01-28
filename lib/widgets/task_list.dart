@@ -67,17 +67,17 @@ class TaskList extends StatelessWidget {
                   isOverdue: isOverdue,
                   categoryColor: taskProvider.getCategoryColor(task.category),
                 ),
-                if (task.subtasks.isNotEmpty) ...[
+                if (task.subtasks!.isNotEmpty) ...[
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0),
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: task.subtasks.length,
+                      itemCount: task.subtasks?.length,
                       itemBuilder: (context, subtaskIndex) {
-                        final subtask = task.subtasks[subtaskIndex];
+                        final subtask = task.subtasks?[subtaskIndex];
                         return CheckboxListTile(
-                          title: Text(subtask.title),
+                          title: Text(subtask!.title),
                           value: subtask.isCompleted,
                           onChanged: (value) {
                             taskProvider.toggleSubtaskCompletion(

@@ -25,10 +25,10 @@ class TaskModel {
   @HiveField(6)
   DateTime? timeDeadline;
   @HiveField(7)
-  final String priority;
+  final String? priority;
 
   @HiveField(8)
-  List<Subtask> subtasks; // New Field
+  List<Subtask>? subtasks; // New Field
 
   // Constructor
   TaskModel({

@@ -335,7 +335,7 @@ class TaskProvider extends ChangeNotifier {
   // Add a subtask to a specific task
   void addSubtask(String taskId, Subtask subtask) {
     final task = _tasks.firstWhere((task) => task.id == taskId);
-    task.subtasks.add(subtask);
+    task.subtasks?.add(subtask);
     _taskBox.put(task.id, task); // Save to Hive
     notifyListeners();
   }
@@ -343,7 +343,7 @@ class TaskProvider extends ChangeNotifier {
 // Toggle subtask completion
   void toggleSubtaskCompletion(String taskId, int subtaskIndex) {
     final task = _tasks.firstWhere((task) => task.id == taskId);
-    task.subtasks[subtaskIndex].toggleCompleted();
+    task.subtasks?[subtaskIndex].toggleCompleted();
     _taskBox.put(task.id, task); // Save to Hive
     notifyListeners();
   }
@@ -351,7 +351,7 @@ class TaskProvider extends ChangeNotifier {
 // Remove a subtask
   void removeSubtask(String taskId, int subtaskIndex) {
     final task = _tasks.firstWhere((task) => task.id == taskId);
-    task.subtasks.removeAt(subtaskIndex);
+    task.subtasks?.removeAt(subtaskIndex);
     _taskBox.put(task.id, task); // Save to Hive
     notifyListeners();
   }

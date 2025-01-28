@@ -24,8 +24,8 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       isCompleted: fields[4] as bool,
       dueDate: fields[5] as DateTime?,
       timeDeadline: fields[6] as DateTime?,
-      priority: fields[7] as String,
-      subtasks: (fields[8] as List).cast<Subtask>(),
+      priority: fields[7] as String?,
+      subtasks: (fields[8] as List?)?.cast<Subtask>(),
     );
   }
 
