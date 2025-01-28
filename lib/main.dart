@@ -11,8 +11,10 @@ import 'package:timezone/data/latest.dart' as tz;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
   Hive.registerAdapter(TaskModelAdapter()); // Register your adapter
-  await Hive.openBox<TaskModel>('tasks'); // Ensure the box is opened here
+  await Hive.openBox<TaskModel>('tasks');
+  await Hive.box<TaskModel>('tasks').clear(); // Ensure the box is opened here
   await NotificationService().init();
   tz.initializeTimeZones();
 

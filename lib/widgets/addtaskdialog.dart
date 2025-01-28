@@ -1,41 +1,139 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:sunotes/models/task_model.dart';
-import 'package:sunotes/providers/task_provider.dart';
 import 'package:sunotes/services/notification_service.dart';
-
 import 'package:sunotes/widgets/brand_colors.dart';
 
 class AddTaskDialog extends StatefulWidget {
-  const AddTaskDialog({super.key});
+  final Function(TaskModel) onTaskAdded;
+
+  AddTaskDialog({required this.onTaskAdded});
 
   @override
   _AddTaskDialogState createState() => _AddTaskDialogState();
 }
 
 class _AddTaskDialogState extends State<AddTaskDialog> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _taskTitleController = TextEditingController();
+  DateTime? _selectedDueDate;
+  Duration? _selectedReminderDuration;
   String _selectedCategory = 'Uncategorized';
-  DateTime? _selectedDeadline;
-  TimeOfDay? _selectedTime;
-
   @override
   void dispose() {
-    _controller.dispose();
+    _taskTitleController.dispose();
     super.dispose();
   }
 
-  // Method to pick time
-  Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? pickedTime = await showTimePicker(
+  void _pickDueDate() async {
+    final pickedDate = await showDatePicker(
       context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 365)),
     );
-    if (pickedTime != null) {
+
+    if (pickedDate != null) {
+      final pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDueDate = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
+    }
+  }
+
+  void _pickReminderDuration() async {
+    final pickedDuration = await showModalBottomSheet<Duration>(
+      context: context,
+      builder: (context) {
+        return ListView(
+          children: [
+            ListTile(
+              title: Text("5 minutes before"),
+              onTap: () => Navigator.of(context).pop(Duration(minutes: 5)),
+            ),
+            ListTile(
+              title: Text("15 minutes before"),
+              onTap: () => Navigator.of(context).pop(Duration(minutes: 15)),
+            ),
+            ListTile(
+              title: Text("30 minutes before"),
+              onTap: () => Navigator.of(context).pop(Duration(minutes: 30)),
+            ),
+            ListTile(
+              title: Text("1 hour before"),
+              onTap: () => Navigator.of(context).pop(Duration(hours: 1)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (pickedDuration != null) {
       setState(() {
-        _selectedTime = pickedTime;
+        _selectedReminderDuration = pickedDuration;
       });
     }
+  }
+
+  void _addTask() {
+    final title = _taskTitleController.text.trim();
+
+    if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Task title cannot be empty")),
+      );
+      return;
+    }
+
+    if (_selectedDueDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please select a due date")),
+      );
+      return;
+    }
+
+    final reminderTime = _selectedReminderDuration != null
+        ? _selectedDueDate!.subtract(_selectedReminderDuration!)
+        : null;
+
+    if (reminderTime != null && reminderTime.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Reminder time must be in the future")),
+      );
+      return;
+    }
+
+    final newTask = TaskModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      dueDate: _selectedDueDate,
+      category: _selectedCategory, // Update based on your UI
+      isCompleted: false, description: '', priority: '',
+    );
+
+    widget.onTaskAdded(newTask);
+
+    if (reminderTime != null) {
+      NotificationService().scheduleNotification(
+        id: newTask.id.hashCode,
+        title: 'Task Reminder 🔔',
+        body: 'Reminder for task: "$title"',
+        scheduledTime: reminderTime,
+      );
+    }
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -47,165 +145,85 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       'Shopping',
       'Health'
     ];
-
     return AlertDialog(
-      backgroundColor: BrandColors.cardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          'Add Task',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: BrandColors.primaryColor,
-          ),
-        ),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Task Title Input
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              hintText: 'Enter task',
-              hintStyle: TextStyle(color: Colors.grey[600]),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: BrandColors.primaryColor),
+      title: Text('Add New Task'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _taskTitleController,
+              decoration: InputDecoration(labelText: 'Task Title'),
+            ),
+            SizedBox(height: 16),
+            // Category Dropdown
+            DropdownButton<String>(
+              value: _selectedCategory,
+              isExpanded: true,
+              style: const TextStyle(color: BrandColors.textColor),
+              items: categories
+                  .map((category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedCategory = value;
+                  });
+                }
+              },
+              underline: Container(
+                height: 1,
+                color: BrandColors.primaryColor,
               ),
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // Category Dropdown
-          DropdownButton<String>(
-            value: _selectedCategory,
-            isExpanded: true,
-            style: const TextStyle(color: BrandColors.textColor),
-            items: categories
-                .map((category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    ))
-                .toList(),
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _selectedCategory = value;
-                });
-              }
-            },
-            underline: Container(
-              height: 1,
-              color: BrandColors.primaryColor,
+            SizedBox(
+              height: 16,
             ),
-          ),
-          const SizedBox(height: 16),
-
-          // Deadline Row
-          Row(
-            children: [
-              const Text('Deadline: ',
-                  style: TextStyle(color: BrandColors.textColor)),
-              const Spacer(),
-              Text(
-                _selectedDeadline != null
-                    ? "${_selectedDeadline!.year}-${_selectedDeadline!.month.toString().padLeft(2, '0')}-${_selectedDeadline!.day.toString().padLeft(2, '0')}"
-                    : 'None',
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-              IconButton(
-                icon: const Icon(Icons.calendar_today,
-                    color: BrandColors.primaryColor),
-                onPressed: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDeadline ?? DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2050),
-                  );
-                  if (pickedDate != null) {
-                    setState(() {
-                      _selectedDeadline = pickedDate;
-                    });
-                    // Allow picking time after date is selected
-                    await _selectTime(context);
-                  }
-                },
-              ),
-            ],
-          ),
-          if (_selectedTime != null) ...[
-            const SizedBox(height: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Time: ',
-                    style: TextStyle(color: BrandColors.textColor)),
-                const Spacer(),
                 Text(
-                  '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')}',
-                  style: TextStyle(color: Colors.grey[700]),
+                  _selectedDueDate != null
+                      ? 'Due Date: ${DateFormat.yMMMd().add_jm().format(_selectedDueDate!)}'
+                      : 'No Due Date Set',
+                ),
+                TextButton(
+                  onPressed: _pickDueDate,
+                  child: Text('Set Due Date'),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedReminderDuration != null
+                      ? 'Reminder: ${_selectedReminderDuration!.inMinutes} mins before'
+                      : 'No Reminder Set',
+                ),
+                TextButton(
+                  onPressed: _pickReminderDuration,
+                  child: Text('Set Reminder'),
                 ),
               ],
             ),
           ],
-        ],
+        ),
       ),
       actions: [
-        // Cancel Button
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(foregroundColor: BrandColors.textColor),
-          child: const Text('Cancel'),
+          child: Text('Cancel'),
         ),
-        // Add Task Button
-        TextButton(
-          onPressed: () async {
-            if (_controller.text.isNotEmpty) {
-              final DateTime createdDate = DateTime.now();
-              final DateTime finalDeadline = _selectedDeadline != null
-                  ? DateTime(
-                      _selectedDeadline!.year,
-                      _selectedDeadline!.month,
-                      _selectedDeadline!.day,
-                      _selectedTime?.hour ?? 0,
-                      _selectedTime?.minute ?? 0,
-                    )
-                  : createdDate;
-
-              final newTask = TaskModel(
-                id: DateTime.now().microsecondsSinceEpoch.toString(),
-                title: _controller.text,
-                description: '',
-                isCompleted: false,
-                category: _selectedCategory,
-                dueDate: finalDeadline,
-              );
-
-              // Add the task using the TaskProvider
-              Provider.of<TaskProvider>(context, listen: false)
-                  .addTask(newTask);
-// Schedule a notification if a deadline is set
-              if (_selectedDeadline != null) {
-                NotificationService().scheduleNotification(
-                  id: DateTime.now().millisecondsSinceEpoch,
-                  title: 'Task Reminder',
-                  body: 'Your task "${newTask.title}" is due soon!',
-                  scheduledTime: _selectedDeadline!,
-                );
-              }
-
-              Navigator.of(context).pop();
-            }
-          },
-          style: TextButton.styleFrom(
-            foregroundColor: BrandColors.accentColor,
-          ),
-          child: const Text('Add'),
+        ElevatedButton(
+          onPressed: _addTask,
+          child: Text('Add Task'),
         ),
       ],
     );

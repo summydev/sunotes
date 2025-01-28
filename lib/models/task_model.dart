@@ -24,6 +24,11 @@ class TaskModel {
 
   @HiveField(6)
   DateTime? timeDeadline;
+  @HiveField(7)
+  final String priority;
+
+  @HiveField(8)
+  List<Subtask> subtasks; // New Field
 
   // Constructor
   TaskModel({
@@ -34,27 +39,51 @@ class TaskModel {
     this.isCompleted = false,
     this.dueDate,
     this.timeDeadline,
+    required this.priority,
+    this.subtasks = const [],
   });
 
   // Adding copyWith method
-  TaskModel copyWith(
-      {String? id,
-      String? title,
-      String? description,
-      String? category,
-      bool? isCompleted,
-      DateTime? dueDate,
-      DateTime? timeDeadline}) {
+  TaskModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? category,
+    bool? isCompleted,
+    DateTime? dueDate,
+    DateTime? timeDeadline,
+    String? priority,
+    List<Subtask>? subtasks,
+  }) {
     return TaskModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      isCompleted: isCompleted ?? this.isCompleted,
-      dueDate: dueDate ?? this.dueDate,
-      timeDeadline: timeDeadline ?? this.timeDeadline,
-    );
+        id: id ?? this.id,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        category: category ?? this.category,
+        isCompleted: isCompleted ?? this.isCompleted,
+        dueDate: dueDate ?? this.dueDate,
+        timeDeadline: timeDeadline ?? this.timeDeadline,
+        priority: priority ?? this.priority,
+        subtasks: subtasks ?? this.subtasks);
   }
+
+  void toggleCompleted() {
+    isCompleted = !isCompleted;
+  }
+}
+
+@HiveType(typeId: 1)
+class Subtask {
+  @HiveField(0)
+  String title;
+
+  @HiveField(1)
+  bool isCompleted;
+
+  Subtask({
+    required this.title,
+    this.isCompleted = false,
+  });
 
   void toggleCompleted() {
     isCompleted = !isCompleted;

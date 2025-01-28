@@ -134,8 +134,17 @@ class ViewTodoScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            // final categories = context.read<TaskProvider>().getCategories();
             showDialog(
-                context: context, builder: (context) => const AddTaskDialog());
+              context: context,
+              builder: (context) => AddTaskDialog(
+                onTaskAdded: (task) {
+                  Provider.of<TaskProvider>(context, listen: false)
+                      .addTask(task);
+                },
+                // categories: categories,
+              ),
+            );
           },
           backgroundColor: BrandColors.accentColor, // Accent color for button
           child: const Icon(Icons.add, color: Colors.white),
