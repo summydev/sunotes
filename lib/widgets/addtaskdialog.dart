@@ -7,7 +7,7 @@ import 'package:sunotes/widgets/brand_colors.dart';
 class AddTaskDialog extends StatefulWidget {
   final Function(TaskModel) onTaskAdded;
 
-  AddTaskDialog({required this.onTaskAdded});
+  const AddTaskDialog({super.key, required this.onTaskAdded});
 
   @override
   _AddTaskDialogState createState() => _AddTaskDialogState();
@@ -29,7 +29,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
     );
 
     if (pickedDate != null) {
@@ -59,20 +59,23 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         return ListView(
           children: [
             ListTile(
-              title: Text("5 minutes before"),
-              onTap: () => Navigator.of(context).pop(Duration(minutes: 5)),
+              title: const Text("5 minutes before"),
+              onTap: () =>
+                  Navigator.of(context).pop(const Duration(minutes: 5)),
             ),
             ListTile(
-              title: Text("15 minutes before"),
-              onTap: () => Navigator.of(context).pop(Duration(minutes: 15)),
+              title: const Text("15 minutes before"),
+              onTap: () =>
+                  Navigator.of(context).pop(const Duration(minutes: 15)),
             ),
             ListTile(
-              title: Text("30 minutes before"),
-              onTap: () => Navigator.of(context).pop(Duration(minutes: 30)),
+              title: const Text("30 minutes before"),
+              onTap: () =>
+                  Navigator.of(context).pop(const Duration(minutes: 30)),
             ),
             ListTile(
-              title: Text("1 hour before"),
-              onTap: () => Navigator.of(context).pop(Duration(hours: 1)),
+              title: const Text("1 hour before"),
+              onTap: () => Navigator.of(context).pop(const Duration(hours: 1)),
             ),
           ],
         );
@@ -91,14 +94,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
 
     if (title.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Task title cannot be empty")),
+        const SnackBar(content: Text("Task title cannot be empty")),
       );
       return;
     }
 
     if (_selectedDueDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select a due date")),
+        const SnackBar(content: Text("Please select a due date")),
       );
       return;
     }
@@ -109,7 +112,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
 
     if (reminderTime != null && reminderTime.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Reminder time must be in the future")),
+        const SnackBar(content: Text("Reminder time must be in the future")),
       );
       return;
     }
@@ -146,16 +149,16 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       'Health'
     ];
     return AlertDialog(
-      title: Text('Add New Task'),
+      title: const Text('Add New Task'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: _taskTitleController,
-              decoration: InputDecoration(labelText: 'Task Title'),
+              decoration: const InputDecoration(labelText: 'Task Title'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Category Dropdown
             DropdownButton<String>(
               value: _selectedCategory,
@@ -181,7 +184,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             ),
             const SizedBox(height: 16),
 
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Row(
@@ -194,11 +197,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 ),
                 TextButton(
                   onPressed: _pickDueDate,
-                  child: Text('Set Due Date'),
+                  child: const Text('Set Due Date'),
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -209,7 +212,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 ),
                 TextButton(
                   onPressed: _pickReminderDuration,
-                  child: Text('Set Reminder'),
+                  child: const Text('Set Reminder'),
                 ),
               ],
             ),
@@ -219,11 +222,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: _addTask,
-          child: Text('Add Task'),
+          child: const Text('Add Task'),
         ),
       ],
     );

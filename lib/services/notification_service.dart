@@ -16,14 +16,14 @@ class NotificationService {
 
   Future<void> init() async {
     tz.initializeTimeZones();
-    final String currentTimeZone = 'Africa/Lagos';
+    const String currentTimeZone = 'Africa/Lagos';
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
     final InitializationSettings initializationSettings =
-        InitializationSettings(
+        const InitializationSettings(
       android: initializationSettingsAndroid,
     );
 
@@ -48,7 +48,7 @@ class NotificationService {
       title,
       body,
       tzScheduledTime,
-      NotificationDetails(
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           'sunote_channel_id',
           'Sunote Notifications',
