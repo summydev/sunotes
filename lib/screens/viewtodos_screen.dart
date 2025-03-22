@@ -4,7 +4,7 @@ import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
 import 'package:sunotes/widgets/addtaskdialog.dart';
 import 'package:sunotes/widgets/task_list.dart';
-import 'package:sunotes/widgets/brand_colors.dart'; // Import the brand colors
+import 'package:sunotes/widgets/brand_colors.dart';
 
 extension DateTimeComparison on DateTime {
   bool isSameDay(DateTime other) {
@@ -65,8 +65,7 @@ class ViewTodoScreen extends StatelessWidget {
 
       return Scaffold(
         appBar: PreferredSize(
-          preferredSize:
-              const Size.fromHeight(220.0), // Increased AppBar height
+          preferredSize: const Size.fromHeight(220.0),
           child: ClipPath(
             clipper: BottomRightCurveClipper(),
             child: AppBar(
@@ -85,15 +84,14 @@ class ViewTodoScreen extends StatelessWidget {
                       style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white), // White text for contrast
+                          color: Colors.white),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       '$completedCount completed, $pendingCount pending',
                       style: const TextStyle(
                         fontSize: 16,
-                        color:
-                            Colors.white70, // Lighter white for secondary text
+                        color: Colors.white70,
                       ),
                     ),
                     const SizedBox(height: 16),

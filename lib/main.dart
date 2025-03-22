@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hive_flutter/hive_flutter.dart'; // Import Hive
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sunotes/models/task_model.dart';
 import 'package:sunotes/providers/task_provider.dart';
 import 'package:sunotes/screens/home_screen.dart';
@@ -12,8 +12,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
-  Hive.registerAdapter(TaskModelAdapter()); // Register your adapter
-  await Hive.openBox<TaskModel>('tasks'); // Ensure the box is opened here
+  Hive.registerAdapter(TaskModelAdapter());
+  await Hive.openBox<TaskModel>('tasks');
   await NotificationService().init();
   tz.initializeTimeZones();
 

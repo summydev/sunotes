@@ -256,30 +256,29 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       lastDate: DateTime(2050),
     );
 
-    if (pickedDate != null) {
-      TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: widget.task.dueDate != null
-            ? TimeOfDay.fromDateTime(widget.task.dueDate!)
-            : TimeOfDay.now(),
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: widget.task.dueDate != null
+          ? TimeOfDay.fromDateTime(widget.task.dueDate!)
+          : TimeOfDay.now(),
+    );
+
+    // Check both pickedDate and pickedTime are not null
+    if (pickedTime != null) {
+      final updatedDateTime = DateTime(
+        pickedDate!.year, // Now safe to access
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
       );
 
-      if (pickedTime != null) {
-        final updatedDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
+      final updatedTask = widget.task.copyWith(dueDate: updatedDateTime);
+      taskProvider.updateTask(updatedTask);
 
-        final updatedTask = widget.task.copyWith(dueDate: updatedDateTime);
-        taskProvider.updateTask(updatedTask);
-
-        setState(() {
-          widget.task.dueDate = updatedDateTime;
-        });
-      }
+      setState(() {
+        widget.task.dueDate = updatedDateTime;
+      });
     }
   }
 
